@@ -10,14 +10,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        arch: [x86_64, x86, arm64, arm]
+        arch: [x86_64, arm64]
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install build tools and dependencies
         run: |
@@ -42,14 +42,8 @@ jobs:
             x86_64)
               ./configure --enable-optimizations --disable-shared --host=x86_64-linux-gnu --prefix=$(pwd)/build/x86_64
               ;;
-            x86)
-              ./configure --enable-optimizations --disable-shared --host=i686-linux-gnu --prefix=$(pwd)/build/x86
-              ;;
             arm64)
               ./configure --enable-optimizations --disable-shared --host=aarch64-linux-gnu --prefix=$(pwd)/build/arm64
-              ;;
-            arm)
-              ./configure --enable-optimizations --disable-shared --host=arm-linux-gnueabi --prefix=$(pwd)/build/arm
               ;;
           esac
           make -j$(nproc)
