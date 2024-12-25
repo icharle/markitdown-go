@@ -47,6 +47,25 @@ jobs:
           make -j$(nproc)
           make install
           
+      - name: Verify library path
+        run: |
+          STATIC_LIB=$(find $(pwd)/python-src/build/${{ matrix.arch }}/lib -name "libpython3*.a")
+          SHARED_LIB=$(find $(pwd)/python-src/build/${{ matrix.arch }}/lib -name "libpython3*.so*")
+          
+          # Check for static library
+          if [ -z "$STATIC_LIB" ]; then
+            echo "Error: Python static library (.a) not found!"
+          else
+            echo "Found Python static library: $STATIC_LIB"
+          fi
+
+          # Check for shared library
+          if [ -z "$SHARED_LIB" ]; then
+            echo "Error: Python shared library (.so) not found!"
+          else
+            echo "Found Python shared library: $SHARED_LIB"
+          fi
+          
       - name: Add Python bin to PATH and set library path dynamically
         run: |
           export PATH=$(pwd)/build/${{ matrix.arch }}/bin:$PATH
