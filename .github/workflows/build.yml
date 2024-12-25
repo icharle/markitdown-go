@@ -69,6 +69,8 @@ jobs:
       - name: Add Python bin to PATH and set library path dynamically
         run: |
           export PATH=$(pwd)/python-src/build/${{ matrix.arch }}/bin:$PATH
+          echo "$(pwd)/python-src/build/${{ matrix.arch }}/bin" >> $GITHUB_PATH
+          
           export LD_LIBRARY_PATH=$(pwd)/python-src/build/${{ matrix.arch }}/lib:$LD_LIBRARY_PATH
           echo "LD_LIBRARY_PATH=$(pwd)/python-src/build/${{ matrix.arch }}/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
       
@@ -80,7 +82,6 @@ jobs:
       
       - name: Install pip packages
         run: |
-          python3 -m ensurepip
           python3 -m pip install --upgrade pip
           python3 -m pip install markitdown
 
