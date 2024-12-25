@@ -19,14 +19,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install build tools and dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential wget tar \
-            gcc-multilib g++-multilib \
-            gcc-arm-linux-gnueabi g++-arm-linux-gnueabi \
-            gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-            python3 python3-pip python3-venv
+          sudo apt-get install -y build-essential wget tar python3 python3-pip python3-venv
+          case "${{ matrix.arch }}" in
+            x86_64)
+              sudo apt-get install -y gcc g++
+              ;;
+            arm)
+              # ARM 32-bit toolchain (using precompiled Linaro toolchain to avoid dependency conflicts)
+              wget https://releases.linaro.org/components/toolchain/binaries/latest/arm-eabi/gcc-linaro-11.3.1-2022.02-x86_64_arm-linux-gnueabi.tar.xz
+              tar -xf gcc-linaro-11.3.1-2022.02-x86_64_arm-linux-gnueabi.tar.xz -C /opt/
+              export PATH=/opt/gcc-linaro-11.3.1-2022.02-x86_64_arm-linux-gnueabi/bin:$PATH
+              ;;
+            arm64)
+              # ARM 64-bit toolchain (using precompiled Linaro toolchain to avoid dependency conflicts)
+              wget https://releases.linaro.org/components/toolchain/binaries/latest/aarch64-elf/gcc-linaro-11.3.1-2022.02-x86_64_aarch64-linux-gnu.tar.xz
+              tar -xf gcc-linaro-11.3.1-2022.02-x86_64_aarch64-linux-gnu.tar.xz -C /opt/
+              export PATH=/opt/gcc-linaro-11.3.1-2022.02-x86_64_aarch64-linux-gnu/bin:$PATH
+              ;;
+          esac
 
       - name: Download Python source code
         run: |
@@ -37,10 +50,13 @@ jobs:
       - name: Build libpython3.x.a and install dependencies
         run: |
           cd python-src
-          mkdir build
+          mkdir -p build
           case "${{ matrix.arch }}" in
             x86_64)
               ./configure --enable-optimizations --disable-shared --host=x86_64-linux-gnu --prefix=$(pwd)/build/x86_64
+              ;;
+            arm)
+              ./configure --enable-optimizations --disable-shared --host=arm-linux-gnueabi --prefix=$(pwd)/build/arm
               ;;
             arm64)
               ./configure --enable-optimizations --disable-shared --host=aarch64-linux-gnu --prefix=$(pwd)/build/arm64
@@ -49,6 +65,7 @@ jobs:
           make -j$(nproc)
           make install
 
+          # Add Python bin to PATH and install dependencies
           export PATH=$(pwd)/build/${{ matrix.arch }}/bin:$PATH
           python3 -m ensurepip
           python3 -m pip install --upgrade pip
