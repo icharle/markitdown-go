@@ -68,15 +68,15 @@ jobs:
           
       - name: Add Python bin to PATH and set library path dynamically
         run: |
-          export PATH=$(pwd)/build/${{ matrix.arch }}/bin:$PATH
-          export LD_LIBRARY_PATH=$(pwd)/build/${{ matrix.arch }}/lib:$LD_LIBRARY_PATH
-          echo "LD_LIBRARY_PATH=$(pwd)/build/${{ matrix.arch }}/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+          export PATH=$(pwd)/python-src/build/${{ matrix.arch }}/bin:$PATH
+          export LD_LIBRARY_PATH=$(pwd)/python-src/build/${{ matrix.arch }}/lib:$LD_LIBRARY_PATH
+          echo "LD_LIBRARY_PATH=$(pwd)/python-src/build/${{ matrix.arch }}/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
       
       - name: Debug LD_LIBRARY_PATH
         run: |
           echo "LD_LIBRARY_PATH is: $LD_LIBRARY_PATH"
-          ls $(pwd)/build/${{ matrix.arch }}/lib
-          ls $(pwd)/build/${{ matrix.arch }}/include
+          ls $(pwd)/python-src/build/${{ matrix.arch }}/lib
+          ls $(pwd)/python-src/build/${{ matrix.arch }}/include
       
       - name: Install pip packages
         run: |
