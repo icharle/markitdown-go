@@ -35,7 +35,7 @@ jobs:
           tar xzf Python-3.13.0.tgz
           mv Python-3.13.0 python-src
 
-      - name: Build libpython3.x.a and install dependencies
+      - name: Build Python
         run: |
           cd python-src
           mkdir -p build
@@ -46,9 +46,21 @@ jobs:
           esac
           make -j$(nproc)
           make install
-
-          # Add Python bin to PATH and install dependencies
+          
+      - name: Add Python bin to PATH and set library path dynamically
+        run: |
           export PATH=$(pwd)/build/${{ matrix.arch }}/bin:$PATH
+          export LD_LIBRARY_PATH=$(pwd)/build/${{ matrix.arch }}/lib:$LD_LIBRARY_PATH
+          echo "LD_LIBRARY_PATH=$(pwd)/build/${{ matrix.arch }}/lib:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+      
+      - name: Debug LD_LIBRARY_PATH
+        run: |
+          echo "LD_LIBRARY_PATH is: $LD_LIBRARY_PATH"
+          ls $(pwd)/build/${{ matrix.arch }}/lib
+          ls $(pwd)/build/${{ matrix.arch }}/include
+      
+      - name: Install pip packages
+        run: |
           python3 -m ensurepip
           python3 -m pip install --upgrade pip
           python3 -m pip install markitdown
