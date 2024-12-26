@@ -8,7 +8,7 @@ package markitdown
 #cgo linux,arm64 LDFLAGS: -L${SRCDIR}/../../libs/arm64/lib -lpython3.13
 
 #cgo linux,amd64 CFLAGS: -I${SRCDIR}/../../libs/amd64/include
-#cgo linux,amd64 LDFLAGS: -L${SRCDIR}/../../libs/amd64/lib -lpython3.13
+#cgo linux,amd64 LDFLAGS: -L${SRCDIR}/../../libs/amd64/lib -lpython3.13 -lm -ldl -lutil
 
 #include <Python.h>
 #include <stdlib.h>

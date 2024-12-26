@@ -41,7 +41,7 @@ jobs:
           mkdir -p build
           case "${{ matrix.arch }}" in
             x86_64)
-              ./configure --build=x86_64-linux-gnu --host=x86_64-linux-gnu --enable-optimizations --enable-ipv6 --enable-shared --enable-static --prefix=$(pwd)/build/x86_64
+              CFLAGS="-g0" ./configure --build=x86_64-linux-gnu --host=x86_64-linux-gnu --enable-optimizations --enable-ipv6 --disable-shared --enable-static --prefix=$(pwd)/build/x86_64
               ;;
           esac
           make -j$(nproc)
@@ -49,6 +49,8 @@ jobs:
           
       - name: Verify library path
         run: |
+          ldd --version
+          
           STATIC_LIB=$(find $(pwd)/python-src/build/${{ matrix.arch }}/lib -name "libpython3*.a")
           SHARED_LIB=$(find $(pwd)/python-src/build/${{ matrix.arch }}/lib -name "libpython3*.so*")
           
