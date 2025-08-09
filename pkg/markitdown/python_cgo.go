@@ -2,13 +2,13 @@ package markitdown
 
 /*
 #cgo darwin,arm64 CFLAGS: -I${SRCDIR}/../../libs/darwin/include
-#cgo darwin,arm64 LDFLAGS: -L${SRCDIR}/../../libs/darwin/lib -lpython3.13
+#cgo darwin,arm64 LDFLAGS: -L${SRCDIR}/../../libs/darwin/lib -lpython3.13 -Wl,-rpath,@loader_path/../../libs/darwin/lib
 
 #cgo linux,arm64 CFLAGS: -I${SRCDIR}/../../libs/arm64/include
-#cgo linux,arm64 LDFLAGS: -L${SRCDIR}/../../libs/arm64/lib -lpython3.13
+#cgo linux,arm64 LDFLAGS: -L${SRCDIR}/../../libs/arm64/lib -lpython3.13 -lm -ldl -lutil -Wl,-rpath,\$ORIGIN/../../libs/arm64/lib
 
 #cgo linux,amd64 CFLAGS: -I${SRCDIR}/../../libs/amd64/include
-#cgo linux,amd64 LDFLAGS: -L${SRCDIR}/../../libs/amd64/lib -lpython3.13 -lm -ldl -lutil
+#cgo linux,amd64 LDFLAGS: -L${SRCDIR}/../../libs/amd64/lib -lpython3.13 -lm -ldl -lutil -Wl,-rpath,\$ORIGIN/../../libs/amd64/lib
 
 #include <Python.h>
 #include <stdlib.h>

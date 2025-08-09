@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        arch: [ x86_64 ]
+        arch: [ x86_64, aarch64 ]
 
     steps:
       - name: Checkout repository
@@ -26,6 +26,9 @@ jobs:
           case "${{ matrix.arch }}" in
             x86_64)
               sudo apt-get install -y gcc g++
+              ;;
+            aarch64)
+              sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
               ;;
           esac
 
@@ -41,7 +44,10 @@ jobs:
           mkdir -p build
           case "${{ matrix.arch }}" in
             x86_64)
-              CFLAGS="-g0" ./configure --build=x86_64-linux-gnu --host=x86_64-linux-gnu --enable-optimizations --enable-ipv6 --disable-shared --enable-static --prefix=$(pwd)/build/x86_64
+              CFLAGS="-g0" ./configure --build=x86_64-linux-gnu --host=x86_64-linux-gnu --enable-optimizations --enable-ipv6 --enable-shared --prefix=$(pwd)/build/x86_64
+              ;;
+            aarch64)
+              CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-g++ CFLAGS="-g0" ./configure --build=x86_64-linux-gnu --host=aarch64-linux-gnu --enable-optimizations --enable-ipv6 --enable-shared --prefix=$(pwd)/build/aarch64
               ;;
           esac
           make -j$(nproc)
@@ -84,8 +90,8 @@ jobs:
       
       - name: Install pip packages
         run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install markitdown
+          /usr/bin/python3 -m pip install --upgrade pip
+          /usr/bin/python3 -m pip install markitdown
 
       - name: Save built libraries
         run: |
